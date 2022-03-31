@@ -3,6 +3,7 @@
 from .shell import *
 from subprocess import call
 from datetime import datetime
+import os
 
 def __device_probe_ini():
 	options = [
@@ -70,6 +71,35 @@ def adb_root(device_id):
     #print("adb root #3 %s"%datetime.now().time())
     #bsh("adb -s {} wait-for-device".format(device_id))
     #print("adb root #4 %s"%datetime.now().time())
+
+def adb_wait_for_device(device_id):
+	print("Waiting for adb...")
+	bsh("adb -s {} wait-for-device".format(device_id))
+
+def adb_sync(device_id):
+    bsh("adb -s {} shell sync".format(device_id))
+
+def adb_remount(device_id):
+    bsh("adb -s {} remount".format(device_id))
+
+def adb_disable_verity(device_id):
+    bsh("adb -s {} disable-verity".format(device_id))
+
+def adb_reboot(device_id):
+    bsh("adb -s {} reboot".format(device_id))
+
+def adb_push(device_id, file, path):
+    bsh("adb -s {} push {} {}".format(device_id, file, path))
+
+def adb_mount(device_id, path):
+    bsh("adb -s {} shell mount -o rw,remount {}".format(device_id, path))
+
+def adb_chmod_exec(device_id, file, path):
+    # make sure full_path is
+    full_path = os.path.join(path, file)
+    full_path = full_path.replace('\\', '/')
+    print("full path:", full_path)
+    bsh("adb -s {} shell chmod 777 {}".format(device_id, full_path))
 
 def device_info(device_id):
     info = {
