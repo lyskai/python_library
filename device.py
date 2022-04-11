@@ -90,6 +90,7 @@ def adb_reboot(device_id):
 
 def adb_push(device_id, file, path):
     bsh("adb -s {} push {} {}".format(device_id, file, path))
+    return 0
 
 def adb_mount(device_id, path):
     bsh("adb -s {} shell mount -o rw,remount {}".format(device_id, path))
