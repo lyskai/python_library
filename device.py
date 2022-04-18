@@ -88,6 +88,9 @@ def adb_disable_verity(device_id):
 def adb_reboot(device_id):
     bsh("adb -s {} reboot".format(device_id))
 
+def adb_mount_debugfs(device_id):
+    bsh("adb -s {} shell setprop persist.dbg.keep_debugfs_mounted true".format(device_id))
+
 def adb_push(device_id, file, path):
     bsh("adb -s {} push {} {}".format(device_id, file, path))
     return 0
