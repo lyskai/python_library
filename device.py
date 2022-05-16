@@ -89,6 +89,8 @@ def adb_reboot(device_id):
     bsh("adb -s {} reboot".format(device_id))
 
 def adb_mount_debugfs(device_id):
+    # Add fix to check if debugfs has already been mounted
+    bsh("adb -s {} shell mount -t debugfs none /sys/kernel/debug/".format(device_id))
     bsh("adb -s {} shell setprop persist.dbg.keep_debugfs_mounted true".format(device_id))
 
 def adb_push(device_id, file, path):
@@ -97,6 +99,28 @@ def adb_push(device_id, file, path):
 
 def adb_mount(device_id, path):
     bsh("adb -s {} shell mount -o rw,remount {}".format(device_id, path))
+
+def adb_pull_cnss_log(device_id, log_path = "."):
+    bsh("adb -s {} shell cat /d/ipc_logging/cnss/log > {}".format(device_id,
+                                                                  os.path.join(log_path, "ipc_cnss.txt")))
+    bsh("adb -s {} shell cat /d/ipc_logging/cnss-long/log > {}".format(device_id,
+                                                                  os.path.join(log_path, "ipc_cnss-long.txt")))
+
+def adb_pull_mhi_log(device_id, log_path = "."):
+    bsh("adb -s {} shell cat /d/ipc_logging/mhi_*00/log > {}".format(device_id,
+                                                                     os.path.join(log_path, "ipc_mhi.txt")))
+    bsh("adb -s {} shell cat /d/ipc_logging/mhi_*DIAG/log > {}".format(device_id,
+                                                                       os.path.join(log_path, "ipc_mhi_diag.txt")))
+    bsh("adb -s {} shell cat /d/ipc_logging/mhi_*LOOPBACK/log > {}".format(device_id,
+                                                                           os.path.join(log_path, "ipc_mhi_LOOPBACK.txt")))
+
+def adb_pull_pcie_log(device_id, log_path = "."):
+    file_list = ["dump", "long", "short"]
+    for idx in range(0, 3):
+        for file in file_list:
+            file_name = "ipc_pcie" + str(idx) + "-" + file
+            bsh("adb -s {} shell cat /d/ipc_logging/pcie{}-{}/log > {}".format(device_id, str(idx), file,
+                                                                  os.path.join(log_path, file_name)))
 
 def adb_chmod_exec(device_id, file, path):
     # make sure full_path is

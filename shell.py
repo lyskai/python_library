@@ -50,7 +50,7 @@ def bsh(cmd):
     result = sh(cmd)
     # Fix me, need use exception here, return -1 is not a good solution
     if (is_err(result.returncode)):
-        return -1
+        return ""
     return result.stdout
 
 def bsh_thread_handler(cmd):
