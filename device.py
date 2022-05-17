@@ -105,6 +105,11 @@ def adb_pull_cnss_log(device_id, log_path = "."):
                                                                   os.path.join(log_path, "ipc_cnss.txt")))
     bsh("adb -s {} shell cat /d/ipc_logging/cnss-long/log > {}".format(device_id,
                                                                   os.path.join(log_path, "ipc_cnss-long.txt")))
+def adb_pull_qmi_log(device_id, log_path = "."):
+    bsh("adb -s {} shell cat /d/ipc_logging/qrtr-7/log > {}".format(device_id,
+                                                                  os.path.join(log_path, "ipc_qrtr_7.txt")))
+    bsh("adb -s {} shell cat /d/ipc_logging/qrtr_ns/log > {}".format(device_id,
+                                                                  os.path.join(log_path, "ipc_qrtr_ns.txt")))
 
 def adb_pull_mhi_log(device_id, log_path = "."):
     bsh("adb -s {} shell cat /d/ipc_logging/mhi_*00/log > {}".format(device_id,
@@ -121,6 +126,12 @@ def adb_pull_pcie_log(device_id, log_path = "."):
             file_name = "ipc_pcie" + str(idx) + "-" + file
             bsh("adb -s {} shell cat /d/ipc_logging/pcie{}-{}/log > {}".format(device_id, str(idx), file,
                                                                   os.path.join(log_path, file_name)))
+
+def adb_pull_wlan_log(device_id, log_path = "."):
+    bsh("adb -s {} pull /data/vendor/wifi/wlan_logs {}".format(device_id, log_path))
+
+def adb_pull_logcat_log(device_id, log_path = "."):
+    bsh("adb -s {} logcat -d > {}".format(device_id, os.path.join(log_path, "logcat.txt")))
 
 def adb_chmod_exec(device_id, file, path):
     # make sure full_path is
