@@ -134,7 +134,7 @@ def adb_pull_logcat_log(device_id, log_path = "."):
     bsh("adb -s {} logcat -d > {}".format(device_id, os.path.join(log_path, "logcat.txt")))
 
 def adb_pull_dmesg_log(device_id, log_path = "."):
-    bsh("adb -s {} shell dmesg -d > {}".format(device_id, os.path.join(log_path, "dmesg.txt")))
+    bsh("adb -s {} shell dmesg > {}".format(device_id, os.path.join(log_path, "dmesg.txt")))
 
 def adb_chmod_exec(device_id, file, path):
     # make sure full_path is
