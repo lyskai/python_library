@@ -1,6 +1,7 @@
 #! python3
 import subprocess
 from datetime import datetime
+from sys import exit
 """
 
 lib-shell contains helper functions to ease interaction with shell commands.
