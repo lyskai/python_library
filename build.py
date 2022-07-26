@@ -1,5 +1,10 @@
 #! python3
 
+from .shell import *
+from subprocess import call
+from datetime import datetime
+import os
+
 import xml.etree.ElementTree as etree
 
 def __transform_file(fileXml):
@@ -32,3 +37,15 @@ def build_info(path):
 	tree = etree.parse(f"{path}/contents.xml")
 	root = tree.getroot()
 	return dict(map(__transform_build, root.findall('./builds_flat/build')))
+
+def source(target):
+    bsh("source build/envsetup.sh && lunch {}-userdebug".format(target))
+
+def rebuild_kernel(target):
+    cmd = "RECOMPILE_KERNEL=1 LTO=thin ./kernel_platform/build/android/prepare_vendor.sh"\
+          "{} consolidate < /dev/null".format(target)
+    bsh(cmd)
+
+def build_vnedor():
+    cmd = "(time bash build.sh -j16 dist --target_only) |& tee Vendor_makelog_$(date +%Y%m%d_%H%M%S).txt"
+    bsh(cmd)
