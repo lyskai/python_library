@@ -48,11 +48,13 @@ def sh(cmd):
 def bsh(cmd):
     """ Execute the given shell command or bail on error (prints stderr) """
     print("==> %s"%cmd)
-    result = sh(cmd)
+    return sh(cmd)
+    """
     # Fix me, need use exception here, return -1 is not a good solution
     if (is_err(result.returncode)):
         return ""
     return result.stdout
+    """
 
 def bsh_thread_handler(cmd):
     bsh(cmd)

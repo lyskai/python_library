@@ -1,9 +1,11 @@
 #! python3
 
+from tkinter import W
 from .shell import *
 from subprocess import call
 from datetime import datetime
 import os
+import re
 
 def __device_probe_ini():
 	options = [
@@ -85,17 +87,36 @@ def adb_remount(device_id):
 def adb_disable_verity(device_id):
     bsh("adb -s {} disable-verity".format(device_id))
 
+def adb_get_verity(device_id):
+    result = bsh("adb -s {} shell getprop".format(device_id))
+    if is_err(result.returncode):
+        print("getprop failed")
+    for line in re.split(r'[\n\r]+', result.stdout):
+        #line = re.sub(r'\s+$', r'', line)
+        if "[ro.boot.veritymode]" in line and "disabled" in line:
+            #print(line.split()[1].split())
+            print("verify disabled")
+            return False
+    return True
+
 def adb_reboot(device_id):
     bsh("adb -s {} reboot".format(device_id))
 
-def adb_mount_debugfs(device_id):
-    # Add fix to check if debugfs has already been mounted
-    bsh("adb -s {} shell mount -t debugfs none /sys/kernel/debug/".format(device_id))
+def adb_keep_debugfs_mounted(device_id):
     bsh("adb -s {} shell setprop persist.dbg.keep_debugfs_mounted true".format(device_id))
 
+def adb_mount_debugfs(device_id):
+    # Add fix to check if debugfs has already been mounted
+    result = bsh("adb -s {} shell mount -t debugfs none /sys/kernel/debug/".format(device_id))
+    if is_err(result.returncode) and "Device or resource busy" not in result.stdout:
+        print(result.stdout)
+
 def adb_push(device_id, file, path):
-    bsh("adb -s {} push {} {}".format(device_id, file, path))
-    return 0
+    result = bsh("adb -s {} push {} {}".format(device_id, file, path))
+    if "error" in result.stdout:
+        return (-1, result.stdout)
+    else:
+        return (0, result.stdout)
 
 def adb_mount(device_id, path):
     bsh("adb -s {} shell mount -o rw,remount {}".format(device_id, path))
@@ -168,8 +189,13 @@ def wait_for_adb():
 	bsh("adb wait-for-device")
 
 def adb_devices():
-    print("adb devices")
-    output = bsh("adb devices")
+    result = bsh("adb devices")
+    if is_err(result.returncode) :
+        print(result.stdout)
+        return []
+    else:
+        output = result.stdout
+
     # assume output is using below format
     # List of devices attached
     # 174e29ac        device
