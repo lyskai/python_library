@@ -1,6 +1,4 @@
 #! python3
-
-from tkinter import W
 from .shell import *
 from subprocess import call
 from datetime import datetime
