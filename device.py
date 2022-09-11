@@ -63,6 +63,12 @@ def __device_probe_hostapd_conf():
 		'hostapd_conf_name': None,
 	}
 
+def adb_cmd(device_id, cmd):
+    result = bsh("adb -s {} shell {}".format(device_id, cmd))
+    if is_err(result.returncode):
+        print(result.stdout)
+    return result.returncode
+
 def adb_root(device_id):
     #print("adb root #1 %s"%datetime.now().time())
     #bsh("adb -s {} wait-for-device".format(device_id))
