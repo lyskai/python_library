@@ -103,6 +103,15 @@ def adb_get_verity(device_id):
             return False
     return True
 
+def adb_get_property(device_id, property):
+    result = bsh("adb -s {} shell getprop".format(device_id))
+    if is_err(result.returncode):
+        print("getprop failed")
+    for line in re.split(r'[\n\r]+', result.stdout):
+        if property in line:
+            return line
+    return ""
+
 def adb_reboot(device_id):
     bsh("adb -s {} reboot".format(device_id))
 
@@ -121,6 +130,21 @@ def adb_push(device_id, file, path):
         return (-1, result.stdout)
     else:
         return (0, result.stdout)
+
+def adb_rmmod(device_id, driver):
+    bsh("adb -s {} shell rmmod {}".format(device_id, driver))
+
+def adb_insmod(device_id, binary, mode):
+    if mode == "sniffer":
+        bsh("adb -s {} shell insmod {} con_mode=4".format(device_id, binary))
+    else:
+        bsh("adb -s {} shell insmod {}".format(device_id, binary))
+
+def adb_interface_up(device_id, interface):
+    bsh("adb -s {} shell ifconfig {} up".format(device_id, interface))
+
+def adb_remove_folder(device_id, folder):
+    bsh("adb -s {} shell rm -rf {}".format(device_id, folder))
 
 def adb_mount(device_id, path):
     bsh("adb -s {} shell mount -o rw,remount {}".format(device_id, path))
@@ -212,6 +236,12 @@ def adb_devices():
             device_list.append(item)
     print(device_list)
     return device_list
+
+def adb_get_chip(device_id):
+    result = bsh("adb -s {} shell lspci | grep 17cb:11 | cut -f4 -d : | cut -f1 -d ' '".format(device_id))
+    for line in re.split(r'[\n\r]+', result.stdout):
+        if line.startswith("11"):
+            return line
 
 def wait_for_boot():
 	print(f"Waiting for boot complete...")

@@ -31,6 +31,7 @@ exits the program on failure. The full table of shell functions are as follows:
 from subprocess import DEVNULL, PIPE, run
 from os import path as os_path
 import threading
+import logging
 
 def is_success(result):
 	""" Returns true if the given result is not a non-zero status code """
@@ -47,7 +48,7 @@ def sh(cmd):
 
 def bsh(cmd):
     """ Execute the given shell command or bail on error (prints stderr) """
-    print("==> %s"%cmd)
+    logging.info("%s"%cmd)
     return sh(cmd)
     """
     # Fix me, need use exception here, return -1 is not a good solution
