@@ -10,8 +10,11 @@ def get_wlan_driver_binary(device):
     id = adb_get_chip(device)
     if id == "1103":
         return "/vendor_dlkm/lib/modules/qca_cld3_qca6490.ko"
-    elif id == "1108":
+    elif id == "1107":
         return "/vendor_dlkm/lib/modules/qca_cld3_kiwi_v2.ko"
+    else:
+        print("doesn't find wlan chip, pls check it")
+        return ""
 
 def get_wlan_driver_name(device):
     id = adb_get_chip(device)
