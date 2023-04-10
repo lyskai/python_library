@@ -289,3 +289,40 @@ def wait_for_service(name, wait_for_start = True):
 			break
 
 		bsh("sleep 0.5s")
+
+def choose_device_id(device_id = None):
+    dev_list = []
+    dev_list = adb_devices()
+    if device_id:
+        if device_id not in dev_list:
+            print("device %s is not enuneramted !!!"%(device_id))
+            print("current device id ", dev_list)
+            return None
+    elif len(dev_list) == 1:
+        device_id = dev_list[0]
+        platform = adb_get_property(device_id, "[ro.board.platform]")
+        platform = platform.split()[1]
+        print("dev %s - %s"%(device_id, platform))
+        return dev_list[0]
+    elif len(dev_list) == 0:
+        print("No devices found, pls recheck")
+        return None
+    else:
+        print("there are multiple devices, pls select correct on by index")
+        idx = 0
+        for dev in dev_list:
+            platform = adb_get_property(dev, "[ro.board.platform]")
+            platform = platform.split()[1]
+            print("  %d: dev %s - %s"%(idx, dev, platform))
+            idx = idx+1
+
+        try:
+            idx = int(input("selection:"))
+        except ValueError:
+            print("selection is invalid, pls input Integer.")
+            return None
+        if idx not in range(0, len(dev_list)):
+            print("selection %d is not in range [0, %d], exit\n"%(idx, len(dev_list)-1))
+            return None
+
+        return dev_list[idx]
