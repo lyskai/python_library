@@ -64,7 +64,7 @@ def __device_probe_hostapd_conf():
 	}
 
 def adb_cmd(device_id, cmd):
-    result = bsh("adb -s {} shell {}".format(device_id, cmd))
+    result = bsh("adb -s {} shell \"{}\"".format(device_id, cmd))
     if is_err(result.returncode):
         print(result.stdout)
     return result.returncode
