@@ -48,7 +48,7 @@ def sh(cmd):
 
 def bsh(cmd):
     """ Execute the given shell command or bail on error (prints stderr) """
-    logging.info("%s"%cmd)
+    #logging.info("%s"%cmd)
     return sh(cmd)
     """
     # Fix me, need use exception here, return -1 is not a good solution

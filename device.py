@@ -64,10 +64,15 @@ def __device_probe_hostapd_conf():
 	}
 
 def adb_cmd(device_id, cmd):
-    result = bsh("adb -s {} shell \"{}\"".format(device_id, cmd))
+    result = bsh("adb -s {} shell \'{}\'".format(device_id, cmd))
     if is_err(result.returncode):
         print(result.stdout)
     return result.returncode
+
+def adb_connect(ip, port):
+    result = bsh(f"adb connect {ip}:{port}")
+    print(result)
+    return result.stdout
 
 def adb_root(device_id):
     #print("adb root #1 %s"%datetime.now().time())
@@ -148,6 +153,9 @@ def adb_remove_folder(device_id, folder):
 
 def adb_mount(device_id, path):
     bsh("adb -s {} shell mount -o rw,remount {}".format(device_id, path))
+
+def adb_pull(device_id, src, dest = "."):
+    bsh(f"adb -s {device_id} pull {src} {dest}")
 
 def adb_pull_cnss_log(device_id, log_path = "."):
     bsh("adb -s {} shell cat /d/ipc_logging/cnss/log > {}".format(device_id,
